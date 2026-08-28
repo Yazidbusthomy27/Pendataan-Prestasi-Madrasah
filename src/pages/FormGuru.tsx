@@ -11,11 +11,7 @@ export default function FormGuru() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<Partial<GuruRecord>>({
-    type: 'guru',
-    jenjang: 'MI',
-    jenisKelamin: 'Laki-laki',
-    tingkat: 'Kabupaten',
-    prestasi: 'Juara 1'
+    type: 'guru'
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -114,7 +110,8 @@ export default function FormGuru() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Pilih Lembaga (Jenjang) *</label>
-                  <select required name="jenjang" value={formData.jenjang} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                  <select required name="jenjang" value={formData.jenjang || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="" disabled>- Pilih -</option>
                     <option value="RA">RA</option>
                     <option value="MI">MI</option>
                     <option value="MTs">MTs</option>
@@ -150,7 +147,8 @@ export default function FormGuru() {
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Jenis Kelamin *</label>
-                  <select required name="jenisKelamin" value={formData.jenisKelamin} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                  <select required name="jenisKelamin" value={formData.jenisKelamin || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="" disabled>- Pilih -</option>
                     <option value="Laki-laki">Laki-laki</option>
                     <option value="Perempuan">Perempuan</option>
                   </select>
@@ -164,7 +162,8 @@ export default function FormGuru() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Pencapaian Prestasi *</label>
-                  <select required name="prestasi" value={formData.prestasi} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                  <select required name="prestasi" value={formData.prestasi || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="" disabled>- Pilih -</option>
                     <option value="Keterangan">Keterangan (Isi manual)</option>
                     <option value="Juara 1">Juara 1</option>
                     <option value="Juara 2">Juara 2</option>
@@ -184,7 +183,8 @@ export default function FormGuru() {
 
                 <div className={formData.prestasi === 'Keterangan' ? 'md:col-span-2' : ''}>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Tingkat Kompetisi *</label>
-                  <select required name="tingkat" value={formData.tingkat} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                  <select required name="tingkat" value={formData.tingkat || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="" disabled>- Pilih -</option>
                     <option value="Kabupaten">Kabupaten</option>
                     <option value="Regional">Regional</option>
                     <option value="Provinsi">Provinsi</option>

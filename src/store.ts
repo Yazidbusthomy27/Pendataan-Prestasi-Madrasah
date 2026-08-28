@@ -87,7 +87,8 @@ export const store = {
           row,
           fileBase64,
           fileName,
-          fileMimeType
+          fileMimeType,
+          folderId: '1ig9jTBM92liW7tDdW21LTANkMSM26tMz'
         }
       })
     });
@@ -117,7 +118,8 @@ export const store = {
           row,
           fileBase64,
           fileName,
-          fileMimeType
+          fileMimeType,
+          folderId: '1ig9jTBM92liW7tDdW21LTANkMSM26tMz'
         }
       })
     });
