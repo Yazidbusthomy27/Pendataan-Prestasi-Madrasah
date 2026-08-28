@@ -12,6 +12,7 @@ export interface BaseRecord {
   nsm: string;
   jenisKelamin: JenisKelamin;
   tingkat: Tingkat;
+  detailPencapaian: string;
   tanggalPelaksanaan: string;
   penyelenggara: string;
   sertifikatLink: string;

@@ -28,7 +28,7 @@ export default function DataSiswa() {
   const handleExportCSV = () => {
     if (filteredData.length === 0) return;
     
-    const headers = ['No', 'Jenjang', 'KKM', 'Nama Madrasah', 'NSM', 'Nama Siswa', 'L/P', 'Prestasi', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
+    const headers = ['No', 'Jenjang', 'KKM', 'Nama Madrasah', 'NSM', 'Nama Siswa', 'L/P', 'Prestasi', 'Detail Pencapaian', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
     
     const escapeCsv = (str: string) => {
       if (str === null || str === undefined) return '""';
@@ -45,6 +45,7 @@ export default function DataSiswa() {
       escapeCsv(item.namaSiswa),
       escapeCsv(item.jenisKelamin === 'Laki-laki' ? 'L' : 'P'),
       escapeCsv(item.prestasi),
+      escapeCsv(item.detailPencapaian),
       escapeCsv(item.tingkat),
       escapeCsv(item.tanggalPelaksanaan),
       escapeCsv(item.penyelenggara),
@@ -134,6 +135,7 @@ export default function DataSiswa() {
                     <th className="px-4 py-3 min-w-[200px]">Madrasah</th>
                     <th className="px-4 py-3 min-w-[200px]">Nama Siswa</th>
                     <th className="px-4 py-3">Prestasi</th>
+                    <th className="px-4 py-3 min-w-[200px]">Detail Pencapaian</th>
                     <th className="px-4 py-3">Tingkat</th>
                     <th className="px-4 py-3 min-w-[120px]">Tanggal</th>
                     <th className="px-4 py-3">Penyelenggara</th>
@@ -155,6 +157,7 @@ export default function DataSiswa() {
                           <div className="text-xs text-slate-500">{item.jenisKelamin}</div>
                         </td>
                         <td className="px-4 py-3 text-emerald-600 font-medium">{item.prestasi}</td>
+                        <td className="px-4 py-3 text-slate-700">{item.detailPencapaian}</td>
                         <td className="px-4 py-3">{item.tingkat}</td>
                         <td className="px-4 py-3 text-slate-500">{item.tanggalPelaksanaan}</td>
                         <td className="px-4 py-3 text-slate-600">{item.penyelenggara}</td>

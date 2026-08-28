@@ -28,7 +28,7 @@ export default function DataGuru() {
   const handleExportCSV = () => {
     if (filteredData.length === 0) return;
     
-    const headers = ['No', 'Jenjang', 'KKM', 'Nama Madrasah', 'NSM', 'Nama Guru', 'L/P', 'Prestasi', 'Ket. Prestasi', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
+    const headers = ['No', 'Jenjang', 'KKM', 'Nama Madrasah', 'NSM', 'Nama Guru', 'L/P', 'Prestasi', 'Ket. Prestasi', 'Detail Pencapaian', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
     
     const escapeCsv = (str: string) => {
       if (str === null || str === undefined) return '""';
@@ -46,6 +46,7 @@ export default function DataGuru() {
       escapeCsv(item.jenisKelamin === 'Laki-laki' ? 'L' : 'P'),
       escapeCsv(item.prestasi),
       escapeCsv(item.keteranganPrestasi || ''),
+      escapeCsv(item.detailPencapaian),
       escapeCsv(item.tingkat),
       escapeCsv(item.tanggalPelaksanaan),
       escapeCsv(item.penyelenggara),
@@ -135,6 +136,7 @@ export default function DataGuru() {
                     <th className="px-4 py-3 min-w-[200px]">Madrasah</th>
                     <th className="px-4 py-3 min-w-[200px]">Nama Guru</th>
                     <th className="px-4 py-3">Prestasi</th>
+                    <th className="px-4 py-3 min-w-[200px]">Detail Pencapaian</th>
                     <th className="px-4 py-3">Tingkat</th>
                     <th className="px-4 py-3 min-w-[120px]">Tanggal</th>
                     <th className="px-4 py-3">Penyelenggara</th>
@@ -160,6 +162,7 @@ export default function DataGuru() {
                             {item.prestasi === 'Keterangan' ? item.keteranganPrestasi : item.prestasi}
                           </div>
                         </td>
+                        <td className="px-4 py-3 text-slate-700">{item.detailPencapaian}</td>
                         <td className="px-4 py-3">{item.tingkat}</td>
                         <td className="px-4 py-3 text-slate-500">{item.tanggalPelaksanaan}</td>
                         <td className="px-4 py-3 text-slate-600">{item.penyelenggara}</td>

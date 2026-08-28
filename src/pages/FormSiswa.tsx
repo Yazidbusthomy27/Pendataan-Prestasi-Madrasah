@@ -173,6 +173,10 @@ export default function FormSiswa() {
                   </select>
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Detail Pencapaian (Contoh: Lomba Tahfidz) *</label>
+                  <input required type="text" name="detailPencapaian" value={formData.detailPencapaian || ''} onChange={handleChange} placeholder="Masukkan detail lomba..." className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Tingkat Kompetisi *</label>
                   <select required name="tingkat" value={formData.tingkat || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
                     <option value="" disabled>- Pilih -</option>
@@ -186,7 +190,7 @@ export default function FormSiswa() {
                   <label className="block text-sm font-medium text-slate-700 mb-1">Tanggal Pelaksanaan *</label>
                   <input required type="date" name="tanggalPelaksanaan" value={formData.tanggalPelaksanaan || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Penyelenggara Kompetisi *</label>
                   <input required type="text" name="penyelenggara" value={formData.penyelenggara || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
                 </div>
