@@ -1,0 +1,8 @@
+{
+  "name": "Pendataan Prestasi Madrasah",
+  "description": "Aplikasi pendataan prestasi siswa dan guru madrasah Kabupaten Jember",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

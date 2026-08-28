@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      try {
+        const originalFetch = window.fetch;
+        Object.defineProperty(window, 'fetch', {
+          get: function() { return originalFetch; },
+          set: function(val) { console.warn('Ignored attempt to overwrite window.fetch'); },
+          configurable: true
+        });
+      } catch (e) {}
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prestasi Madrasah Jember</title>
+    <meta name="description" content="Aplikasi pendataan prestasi siswa dan guru madrasah Kabupaten Jember" />
+    <meta property="og:title" content="Prestasi Madrasah Jember" />
+    <meta property="og:description" content="Aplikasi pendataan prestasi siswa dan guru madrasah Kabupaten Jember" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

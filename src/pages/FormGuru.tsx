@@ -1,0 +1,222 @@
+import React, { useState } from 'react';
+import { useNavigate } from '../router';
+import { ArrowLeft, Save, CheckCircle2, Loader2 } from 'lucide-react';
+import Header from '../components/Header';
+import { store } from '../store';
+import { Jenjang, JenisKelamin, Tingkat, GuruRecord, Prestasi } from '../types';
+
+export default function FormGuru() {
+  const navigate = useNavigate();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState<Partial<GuruRecord>>({
+    type: 'guru',
+    jenjang: 'MI',
+    jenisKelamin: 'Laki-laki',
+    tingkat: 'Kabupaten',
+    prestasi: 'Juara 1'
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const readFileAsBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          // Remove the data URI scheme prefix
+          const base64Str = reader.result.split(',')[1];
+          resolve(base64Str);
+        } else {
+          reject(new Error('Failed to read file'));
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      let fileBase64;
+      let fileName;
+      let fileMimeType;
+
+      if (selectedFile) {
+        fileBase64 = await readFileAsBase64(selectedFile);
+        fileName = selectedFile.name;
+        fileMimeType = selectedFile.type;
+      }
+
+      const record: GuruRecord = {
+        ...(formData as GuruRecord),
+        id: crypto.randomUUID(),
+        sertifikatLink: '', // Akan diisi oleh Apps Script
+        timestamp: Date.now()
+      };
+      
+      await store.addGuru(record, fileBase64, fileName, fileMimeType);
+      setIsSuccess(true);
+      setTimeout(() => {
+        navigate('/form');
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      alert('Terjadi kesalahan saat menyimpan data. Pastikan URL Apps Script sudah dikonfigurasi dengan benar.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-sm w-full border border-sky-100">
+          <CheckCircle2 className="w-16 h-16 text-sky-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">Berhasil!</h2>
+          <p className="text-slate-500">Data prestasi guru berhasil disimpan.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 pb-12">
+      <Header title="Input Prestasi Guru" />
+      
+      <main className="max-w-3xl mx-auto px-4 mt-8">
+        <button 
+          onClick={() => navigate('/form')}
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Kembali
+        </button>
+
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="p-6 md:p-8 space-y-6">
+            
+            {/* Section: Identitas Lembaga */}
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Identitas Lembaga</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Pilih Lembaga (Jenjang) *</label>
+                  <select required name="jenjang" value={formData.jenjang} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="RA">RA</option>
+                    <option value="MI">MI</option>
+                    <option value="MTs">MTs</option>
+                    <option value="MA">MA</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">KKM *</label>
+                  <input required type="text" name="kkm" value={formData.kkm || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Nama Madrasah *</label>
+                  <input required type="text" name="namaMadrasah" value={formData.namaMadrasah || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">NSM *</label>
+                  <input required type="text" name="nsm" value={formData.nsm || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Alamat Madrasah *</label>
+                  <textarea required name="alamatMadrasah" value={formData.alamatMadrasah || ''} onChange={handleChange} rows={2} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none"></textarea>
+                </div>
+              </div>
+            </div>
+
+            {/* Section: Identitas Guru */}
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Identitas Guru</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap Guru *</label>
+                  <input required type="text" name="namaGuru" value={formData.namaGuru || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Jenis Kelamin *</label>
+                  <select required name="jenisKelamin" value={formData.jenisKelamin} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Section: Detail Prestasi */}
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Detail Prestasi</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Pencapaian Prestasi *</label>
+                  <select required name="prestasi" value={formData.prestasi} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="Keterangan">Keterangan (Isi manual)</option>
+                    <option value="Juara 1">Juara 1</option>
+                    <option value="Juara 2">Juara 2</option>
+                    <option value="Juara 3">Juara 3</option>
+                    <option value="Harapan 1">Harapan 1</option>
+                    <option value="Harapan 2">Harapan 2</option>
+                    <option value="Harapan 3">Harapan 3</option>
+                  </select>
+                </div>
+
+                {formData.prestasi === 'Keterangan' && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Keterangan Prestasi *</label>
+                    <input required type="text" name="keteranganPrestasi" value={formData.keteranganPrestasi || ''} onChange={handleChange} placeholder="Contoh: Peserta Terbaik" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                  </div>
+                )}
+
+                <div className={formData.prestasi === 'Keterangan' ? 'md:col-span-2' : ''}>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Tingkat Kompetisi *</label>
+                  <select required name="tingkat" value={formData.tingkat} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                    <option value="Kabupaten">Kabupaten</option>
+                    <option value="Regional">Regional</option>
+                    <option value="Provinsi">Provinsi</option>
+                    <option value="Nasional">Nasional</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Tanggal Pelaksanaan *</label>
+                  <input required type="date" name="tanggalPelaksanaan" value={formData.tanggalPelaksanaan || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Penyelenggara *</label>
+                  <input required type="text" name="penyelenggara" value={formData.penyelenggara || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Upload Sertifikat *</label>
+                  <input required type="file" accept=".pdf,image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" />
+                  <p className="text-xs text-slate-500 mt-1">Format PDF/JPG/PNG. Max 2MB.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          
+          <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end">
+            <button type="submit" disabled={isSubmitting} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white py-2 px-6 rounded-lg font-medium transition-colors disabled:opacity-50">
+              {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+              {isSubmitting ? 'Menyimpan...' : 'Simpan Data'}
+            </button>
+          </div>
+        </form>
+      </main>
+    </div>
+  );
+}
