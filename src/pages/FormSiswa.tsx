@@ -186,7 +186,7 @@ export default function FormSiswa() {
                   <input required type="text" name="penyelenggara" value={formData.penyelenggara || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Upload Sertifikat (Opsional)</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Upload Sertifikat </label>
                   <input type="file" accept=".pdf,image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                   <p className="text-xs text-slate-500 mt-1">Format PDF/JPG/PNG. Max 2MB.</p>
                 </div>

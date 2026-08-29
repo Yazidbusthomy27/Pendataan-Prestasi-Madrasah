@@ -24,7 +24,14 @@ export const store = {
     if (cachedDatabaseMadrasah) return cachedDatabaseMadrasah;
     try {
       const res = await fetch(`${getScriptUrl()}?action=getDatabaseMadrasah&t=${Date.now()}`);
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON, received text:', text.substring(0, 200));
+        return [];
+      }
       if (!data.values) return [];
       
       cachedDatabaseMadrasah = data.values.map((row: any[]) => ({
@@ -45,7 +52,14 @@ export const store = {
   getSiswa: async (): Promise<SiswaRecord[]> => {
     try {
       const res = await fetch(`${getScriptUrl()}?action=getSiswa&t=${Date.now()}`);
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON, received text:', text.substring(0, 200));
+        return [];
+      }
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
@@ -75,7 +89,14 @@ export const store = {
   getGuru: async (): Promise<GuruRecord[]> => {
     try {
       const res = await fetch(`${getScriptUrl()}?action=getGuru&t=${Date.now()}`);
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON, received text:', text.substring(0, 200));
+        return [];
+      }
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
@@ -105,7 +126,14 @@ export const store = {
   getKepala: async (): Promise<KepalaRecord[]> => {
     try {
       const res = await fetch(`${getScriptUrl()}?action=getKepala&t=${Date.now()}`);
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON, received text:', text.substring(0, 200));
+        return [];
+      }
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
@@ -135,7 +163,14 @@ export const store = {
   getMadrasah: async (): Promise<MadrasahRecord[]> => {
     try {
       const res = await fetch(`${getScriptUrl()}?action=getMadrasah&t=${Date.now()}`);
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON, received text:', text.substring(0, 200));
+        return [];
+      }
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
