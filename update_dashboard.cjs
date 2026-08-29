@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+const fs = require('fs');
+
+const content = `import React, { useEffect, useState } from 'react';
 import { useNavigate } from '../router';
 import { Users, GraduationCap, ArrowLeft, BarChart3, ChevronRight, Loader2, UserCircle, Building2, Trophy } from 'lucide-react';
 import Header from '../components/Header';
@@ -13,7 +15,6 @@ export default function Dashboard() {
   const [dataMadrasah, setDataMadrasah] = useState<MadrasahRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'rekap' | 'penilaian'>('rekap');
-  const [leaderboardJenjang, setLeaderboardJenjang] = useState<Jenjang | 'Semua'>('Semua');
 
   useEffect(() => {
     setIsLoading(true);
@@ -35,7 +36,6 @@ export default function Dashboard() {
   const getMadrasahByJenjang = (jenjang: Jenjang) => dataMadrasah.filter(d => d.jenjang === jenjang).length;
 
   const getScore = (tingkat: string, prestasi: string): number => {
-    if (!prestasi || typeof prestasi !== 'string') return 0;
     const isHarapan = prestasi.startsWith('Harapan');
     if (tingkat === 'Internasional') {
       if (prestasi === 'Juara 1') return 60;
@@ -89,11 +89,6 @@ export default function Dashboard() {
     return Object.values(scores).sort((a, b) => b.score - a.score);
   }, [dataSiswa, dataGuru, dataKepala, dataMadrasah]);
 
-  const filteredLeaderboard = React.useMemo(() => {
-    if (leaderboardJenjang === 'Semua') return leaderboard;
-    return leaderboard.filter(item => item.jenjang === leaderboardJenjang);
-  }, [leaderboard, leaderboardJenjang]);
-
   return (
     <div className="min-h-screen bg-slate-50 pb-12">
       <Header title="Dashboard Admin" />
@@ -119,13 +114,13 @@ export default function Dashboard() {
               <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 inline-flex">
                 <button
                   onClick={() => setActiveTab('rekap')}
-                  className={`px-8 py-3 rounded-lg text-sm font-semibold transition-colors ${activeTab === 'rekap' ? 'bg-slate-800 text-white shadow' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
+                  className={\`px-8 py-3 rounded-lg text-sm font-semibold transition-colors \${activeTab === 'rekap' ? 'bg-slate-800 text-white shadow' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}\`}
                 >
                   Rekap Data
                 </button>
                 <button
                   onClick={() => setActiveTab('penilaian')}
-                  className={`px-8 py-3 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${activeTab === 'penilaian' ? 'bg-slate-800 text-white shadow' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
+                  className={\`px-8 py-3 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 \${activeTab === 'penilaian' ? 'bg-slate-800 text-white shadow' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}\`}
                 >
                   <Trophy className="w-4 h-4" />
                   Penilaian
@@ -300,7 +295,7 @@ export default function Dashboard() {
             {activeTab === 'penilaian' && (
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl mx-auto">
                 <div className="p-6 md:p-8">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                  <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                       <div className="bg-blue-100 p-4 rounded-full text-blue-600">
                         <Trophy className="w-8 h-8" />
@@ -309,22 +304,6 @@ export default function Dashboard() {
                         <h3 className="text-2xl font-bold text-slate-800">Klasemen Madrasah Berprestasi</h3>
                         <p className="text-slate-500 font-medium">Peringkat berdasarkan akumulasi nilai di seluruh kategori</p>
                       </div>
-                    </div>
-                    
-                    <div className="flex gap-2 bg-slate-100 p-1 rounded-lg">
-                      {(['Semua', 'RA', 'MI', 'MTs', 'MA'] as const).map(jenj => (
-                        <button
-                          key={jenj}
-                          onClick={() => setLeaderboardJenjang(jenj)}
-                          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
-                            leaderboardJenjang === jenj
-                              ? 'bg-white text-blue-600 shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          {jenj}
-                        </button>
-                      ))}
                     </div>
                   </div>
                   
@@ -339,14 +318,14 @@ export default function Dashboard() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {filteredLeaderboard.length === 0 ? (
+                        {leaderboard.length === 0 ? (
                           <tr>
                             <td colSpan={4} className="py-12 text-center text-slate-500">
                               Belum ada data prestasi untuk dinilai.
                             </td>
                           </tr>
                         ) : (
-                          filteredLeaderboard.map((item, index) => (
+                          leaderboard.map((item, index) => (
                             <tr key={index} className="hover:bg-slate-50/80 transition-colors group">
                               <td className="py-4 px-6 text-center font-bold text-slate-400 group-hover:text-slate-600 transition-colors">
                                 {index === 0 ? (
@@ -385,3 +364,6 @@ export default function Dashboard() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/pages/Dashboard.tsx', content);

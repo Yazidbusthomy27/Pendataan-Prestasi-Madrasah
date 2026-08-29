@@ -1,20 +1,11 @@
-import { SiswaRecord, GuruRecord, KepalaRecord, MadrasahRecord, DatabaseMadrasah } from './types';
+const fs = require('fs');
+
+const content = `import { SiswaRecord, GuruRecord, KepalaRecord, MadrasahRecord, DatabaseMadrasah } from './types';
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzpi53rjdBSr75n-7g0K1guJqjGlJijCFjo217XE44e6NQlZ4EMhyw8nq2whDEo1CtpJg/exec';
 
 const getScriptUrl = () => {
   return SCRIPT_URL;
-};
-
-
-const normalizeJenjang = (j: string): any => {
-  if (!j) return 'MI';
-  const upper = String(j).toUpperCase();
-  if (upper.includes('TSANAWIYAH') || upper === 'MTS') return 'MTs';
-  if (upper.includes('IBTIDAIYAH') || upper === 'MI') return 'MI';
-  if (upper.includes('ALIYAH') || upper === 'MA') return 'MA';
-  if (upper.includes('RAUDHATUL') || upper.includes('ATHFAL') || upper === 'RA') return 'RA';
-  return 'MI';
 };
 
 let cachedDatabaseMadrasah: DatabaseMadrasah[] | null = null;
@@ -23,7 +14,7 @@ export const store = {
   getDatabaseMadrasah: async (): Promise<DatabaseMadrasah[]> => {
     if (cachedDatabaseMadrasah) return cachedDatabaseMadrasah;
     try {
-      const res = await fetch(`${getScriptUrl()}?action=getDatabaseMadrasah&t=${Date.now()}`);
+      const res = await fetch(\`\${getScriptUrl()}?action=getDatabaseMadrasah&t=\${Date.now()}\`);
       const data = await res.json();
       if (!data.values) return [];
       
@@ -44,14 +35,14 @@ export const store = {
 
   getSiswa: async (): Promise<SiswaRecord[]> => {
     try {
-      const res = await fetch(`${getScriptUrl()}?action=getSiswa&t=${Date.now()}`);
+      const res = await fetch(\`\${getScriptUrl()}?action=getSiswa&t=\${Date.now()}\`);
       const data = await res.json();
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
-        id: `siswa-${i}`,
+        id: \`siswa-\${i}\`,
         type: 'siswa',
-        jenjang: normalizeJenjang(row[0]),
+        jenjang: (row[0] || 'MI').trim() as any,
         kkm: row[1] || '',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
@@ -74,14 +65,14 @@ export const store = {
   
   getGuru: async (): Promise<GuruRecord[]> => {
     try {
-      const res = await fetch(`${getScriptUrl()}?action=getGuru&t=${Date.now()}`);
+      const res = await fetch(\`\${getScriptUrl()}?action=getGuru&t=\${Date.now()}\`);
       const data = await res.json();
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
-        id: `guru-${i}`,
+        id: \`guru-\${i}\`,
         type: 'guru',
-        jenjang: normalizeJenjang(row[0]),
+        jenjang: (row[0] || 'MI').trim() as any,
         kkm: row[1] || '',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
@@ -104,14 +95,14 @@ export const store = {
 
   getKepala: async (): Promise<KepalaRecord[]> => {
     try {
-      const res = await fetch(`${getScriptUrl()}?action=getKepala&t=${Date.now()}`);
+      const res = await fetch(\`\${getScriptUrl()}?action=getKepala&t=\${Date.now()}\`);
       const data = await res.json();
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
-        id: `kepala-${i}`,
+        id: \`kepala-\${i}\`,
         type: 'kepala',
-        jenjang: normalizeJenjang(row[0]),
+        jenjang: (row[0] || 'MI').trim() as any,
         kkm: row[1] || '',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
@@ -134,14 +125,14 @@ export const store = {
 
   getMadrasah: async (): Promise<MadrasahRecord[]> => {
     try {
-      const res = await fetch(`${getScriptUrl()}?action=getMadrasah&t=${Date.now()}`);
+      const res = await fetch(\`\${getScriptUrl()}?action=getMadrasah&t=\${Date.now()}\`);
       const data = await res.json();
       if (!data.values) return [];
       
       return data.values.map((row: any[], i: number) => ({
-        id: `madrasah-${i}`,
+        id: \`madrasah-\${i}\`,
         type: 'madrasah',
-        jenjang: normalizeJenjang(row[0]),
+        jenjang: (row[0] || 'MI').trim() as any,
         kkm: row[1] || '',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
@@ -286,3 +277,5 @@ export const store = {
     });
   }
 };
+`
+fs.writeFileSync('src/store.ts', content);

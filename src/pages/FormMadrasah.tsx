@@ -5,15 +5,15 @@ import { DatabaseMadrasah } from '../types';
 import { ArrowLeft, Save, CheckCircle2, Loader2 } from 'lucide-react';
 import Header from '../components/Header';
 import { store } from '../store';
-import { Jenjang, JenisKelamin, Tingkat, GuruRecord, Prestasi } from '../types';
+import { Jenjang, JenisKelamin, Tingkat, MadrasahRecord, Prestasi } from '../types';
 
-export default function FormGuru() {
+export default function FormMadrasah() {
   const navigate = useNavigate();
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState<Partial<GuruRecord>>({
-    type: 'guru'
+  const [formData, setFormData] = useState<Partial<MadrasahRecord>>({
+    type: 'madrasah'
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -59,14 +59,14 @@ export default function FormGuru() {
         fileMimeType = selectedFile.type;
       }
 
-      const record: GuruRecord = {
-        ...(formData as GuruRecord),
+      const record: MadrasahRecord = {
+        ...(formData as MadrasahRecord),
         id: crypto.randomUUID(),
         sertifikatLink: '', // Akan diisi oleh Apps Script
         timestamp: Date.now()
       };
       
-      await store.addGuru(record, fileBase64, fileName, fileMimeType);
+      await store.addMadrasah(record, fileBase64, fileName, fileMimeType);
       setIsSuccess(true);
       setTimeout(() => {
         navigate('/form');
@@ -96,10 +96,10 @@ export default function FormGuru() {
   
   return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-sm w-full border border-sky-100">
-          <CheckCircle2 className="w-16 h-16 text-sky-500 mx-auto mb-4" />
+        <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-sm w-full border border-purple-100">
+          <CheckCircle2 className="w-16 h-16 text-purple-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-slate-800 mb-2">Berhasil!</h2>
-          <p className="text-slate-500">Data prestasi guru berhasil disimpan.</p>
+          <p className="text-slate-500">Data prestasi madrasah berhasil disimpan.</p>
         </div>
       </div>
     );
@@ -124,26 +124,7 @@ export default function FormGuru() {
             <div>
               <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Identitas Lembaga</h3>
               
-              <MadrasahSelector onSelect={handleMadrasahSelect} ringColor="sky" />
-            </div>
-
-            {/* Section: Identitas Guru */}
-            <div>
-              <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Identitas Guru</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap Guru *</label>
-                  <input required type="text" name="namaGuru" value={formData.namaGuru || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Jenis Kelamin *</label>
-                  <select required name="jenisKelamin" value={formData.jenisKelamin || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
-                    <option value="" disabled>- Pilih -</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                  </select>
-                </div>
-              </div>
+              <MadrasahSelector onSelect={handleMadrasahSelect} ringColor="purple" />
             </div>
 
             {/* Section: Detail Prestasi */}
@@ -152,7 +133,7 @@ export default function FormGuru() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Pencapaian Prestasi *</label>
-                  <select required name="prestasi" value={formData.prestasi || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                  <select required name="prestasi" value={formData.prestasi || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
                     <option value="" disabled>- Pilih -</option>
                     <option value="Juara 1">Juara 1</option>
                     <option value="Juara 2">Juara 2</option>
@@ -165,12 +146,12 @@ export default function FormGuru() {
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Detail Pencapaian (Contoh: Prestasi Akademik) *</label>
-                  <input required type="text" name="detailPencapaian" value={formData.detailPencapaian || ''} onChange={handleChange} placeholder="Masukkan detail prestasi..." className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                  <input required type="text" name="detailPencapaian" value={formData.detailPencapaian || ''} onChange={handleChange} placeholder="Masukkan detail prestasi..." className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Tingkat Kompetisi *</label>
-                  <select required name="tingkat" value={formData.tingkat || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+                  <select required name="tingkat" value={formData.tingkat || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
                     <option value="" disabled>- Pilih -</option>
                     <option value="Kabupaten">Kabupaten</option>
                     <option value="Regional">Regional</option>
@@ -181,15 +162,15 @@ export default function FormGuru() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Tanggal Pelaksanaan *</label>
-                  <input required type="date" name="tanggalPelaksanaan" value={formData.tanggalPelaksanaan || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                  <input required type="date" name="tanggalPelaksanaan" value={formData.tanggalPelaksanaan || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Penyelenggara *</label>
-                  <input required type="text" name="penyelenggara" value={formData.penyelenggara || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" />
+                  <input required type="text" name="penyelenggara" value={formData.penyelenggara || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Upload Sertifikat (Opsional)</label>
-                  <input type="file" accept=".pdf,image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" />
+                  <input type="file" accept=".pdf,image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" />
                   <p className="text-xs text-slate-500 mt-1">Format PDF/JPG/PNG. Max 2MB.</p>
                 </div>
               </div>
@@ -198,7 +179,7 @@ export default function FormGuru() {
           </div>
           
           <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end">
-            <button type="submit" disabled={isSubmitting} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white py-2 px-6 rounded-lg font-medium transition-colors disabled:opacity-50">
+            <button type="submit" disabled={isSubmitting} className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-2 px-6 rounded-lg font-medium transition-colors disabled:opacity-50">
               {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {isSubmitting ? 'Menyimpan...' : 'Simpan Data'}
             </button>

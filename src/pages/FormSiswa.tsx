@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import MadrasahSelector from '../components/MadrasahSelector';
 import { useNavigate } from '../router';
+import { DatabaseMadrasah } from '../types';
 import { ArrowLeft, Save, CheckCircle2, Loader2 } from 'lucide-react';
 import Header from '../components/Header';
 import { store } from '../store';
@@ -77,8 +79,22 @@ export default function FormSiswa() {
     }
   };
 
+  const handleMadrasahSelect = (madrasah: DatabaseMadrasah | null) => {
+    if (madrasah) {
+      setFormData(prev => ({
+        ...prev,
+        nsm: madrasah.nsm,
+        namaMadrasah: madrasah.nama,
+        jenjang: madrasah.jenjang as any,
+        kecamatanMadrasah: madrasah.kecamatan,
+      }));
+    }
+  };
+
+  
   if (isSuccess) {
-    return (
+  
+  return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-sm w-full border border-emerald-100">
           <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
@@ -107,34 +123,8 @@ export default function FormSiswa() {
             {/* Section: Identitas Madrasah */}
             <div>
               <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Identitas Madrasah</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Jenjang *</label>
-                  <select required name="jenjang" value={formData.jenjang || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                    <option value="" disabled>- Pilih -</option>
-                    <option value="RA">RA</option>
-                    <option value="MI">MI</option>
-                    <option value="MTs">MTs</option>
-                    <option value="MA">MA</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">KKM *</label>
-                  <input required type="text" name="kkm" value={formData.kkm || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Nama Madrasah *</label>
-                  <input required type="text" name="namaMadrasah" value={formData.namaMadrasah || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">NSM *</label>
-                  <input required type="text" name="nsm" value={formData.nsm || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Alamat Madrasah *</label>
-                  <textarea required name="alamatMadrasah" value={formData.alamatMadrasah || ''} onChange={handleChange} rows={2} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
-                </div>
-              </div>
+              
+              <MadrasahSelector onSelect={handleMadrasahSelect} ringColor="emerald" />
             </div>
 
             {/* Section: Identitas Siswa */}
@@ -184,6 +174,7 @@ export default function FormSiswa() {
                     <option value="Regional">Regional</option>
                     <option value="Provinsi">Provinsi</option>
                     <option value="Nasional">Nasional</option>
+                    <option value="Internasional">Internasional</option>
                   </select>
                 </div>
                 <div>
@@ -195,8 +186,8 @@ export default function FormSiswa() {
                   <input required type="text" name="penyelenggara" value={formData.penyelenggara || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Upload Sertifikat *</label>
-                  <input required type="file" accept=".pdf,image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Upload Sertifikat (Opsional)</label>
+                  <input type="file" accept=".pdf,image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                   <p className="text-xs text-slate-500 mt-1">Format PDF/JPG/PNG. Max 2MB.</p>
                 </div>
               </div>
