@@ -11,7 +11,8 @@ export default function FormMadrasah() {
   const navigate = useNavigate();
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [authNsm, setAuthNsm] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState<Partial<MadrasahRecord>>({
     type: 'madrasah'
   });
@@ -21,52 +22,21 @@ export default function FormMadrasah() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const readFileAsBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          // Remove the data URI scheme prefix
-          const base64Str = reader.result.split(',')[1];
-          resolve(base64Str);
-        } else {
-          reject(new Error('Failed to read file'));
-        }
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+    
     try {
-      let fileBase64;
-      let fileName;
-      let fileMimeType;
-
-      if (selectedFile) {
-        fileBase64 = await readFileAsBase64(selectedFile);
-        fileName = selectedFile.name;
-        fileMimeType = selectedFile.type;
-      }
-
       const record: MadrasahRecord = {
         ...(formData as MadrasahRecord),
         id: crypto.randomUUID(),
-        sertifikatLink: '', // Akan diisi oleh Apps Script
+        sertifikatLink: formData.sertifikatLink || '',
         timestamp: Date.now()
       };
       
-      await store.addMadrasah(record, fileBase64, fileName, fileMimeType);
+      await store.addMadrasah(record);
       setIsSuccess(true);
       setTimeout(() => {
         navigate('/form');
@@ -79,8 +49,23 @@ export default function FormMadrasah() {
     }
   };
 
+  const handleVerify = () => {
+    if (!formData.nsm) {
+      alert("Pilih madrasah terlebih dahulu!");
+      return;
+    }
+    if (authNsm.trim() === formData.nsm) {
+      setIsAuthenticated(true);
+    } else {
+      alert("NSM yang Anda masukkan salah. Verifikasi gagal.");
+      setIsAuthenticated(false);
+    }
+  };
+
   const handleMadrasahSelect = (madrasah: DatabaseMadrasah | null) => {
     if (madrasah) {
+      setIsAuthenticated(false);
+      setAuthNsm('');
       setFormData(prev => ({
         ...prev,
         nsm: madrasah.nsm,
@@ -131,6 +116,14 @@ export default function FormMadrasah() {
             <div>
               <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Detail Prestasi</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Jenis Prestasi *</label>
+                  <select required name="jenisPrestasi" value={formData.jenisPrestasi || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
+                    <option value="" disabled>- Pilih Jenis Prestasi -</option>
+                    <option value="Akademik">Akademik</option>
+                    <option value="Non Akademik">Non Akademik</option>
+                  </select>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Pencapaian Prestasi *</label>
                   <select required name="prestasi" value={formData.prestasi || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
@@ -169,17 +162,42 @@ export default function FormMadrasah() {
                   <input required type="text" name="penyelenggara" value={formData.penyelenggara || ''} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Upload Sertifikat </label>
-                  <input type="file" accept=".pdf,image/*" onChange={handleFileChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" />
-                  <p className="text-xs text-slate-500 mt-1">Format PDF/JPG/PNG. Max 2MB.</p>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Link Google Drive Sertifikat *</label>
+                  <input required type="url" name="sertifikatLink" value={formData.sertifikatLink || ''} onChange={handleChange} placeholder="https://drive.google.com/..." className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" />
+                  <p className="text-xs text-amber-600 mt-1 font-medium">* Pastikan link dibagikan untuk semua orang (Anyone with the link).</p>
                 </div>
               </div>
             </div>
 
           </div>
           
-          <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end">
-            <button type="submit" disabled={isSubmitting} className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-2 px-6 rounded-lg font-medium transition-colors disabled:opacity-50">
+          <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              {isAuthenticated ? (
+                <div className="flex items-center gap-2 text-emerald-600 font-medium text-sm px-2">
+                  <CheckCircle2 className="w-5 h-5" />
+                  NSM Terverifikasi
+                </div>
+              ) : (
+                <>
+                  <input 
+                    type="text" 
+                    placeholder="Ketik NSM untuk verifikasi" 
+                    value={authNsm}
+                    onChange={(e) => setAuthNsm(e.target.value)}
+                    className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm w-full md:w-64"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={handleVerify}
+                    className="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-700 transition-colors whitespace-nowrap"
+                  >
+                    Verifikasi
+                  </button>
+                </>
+              )}
+            </div>
+            <button type="submit" disabled={isSubmitting || !isAuthenticated} className="w-full md:w-auto flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-2 px-6 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {isSubmitting ? 'Menyimpan...' : 'Simpan Data'}
             </button>

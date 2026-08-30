@@ -2,6 +2,7 @@ export type Jenjang = 'RA' | 'MI' | 'MTs' | 'MA';
 export type Tingkat = 'Kabupaten' | 'Regional' | 'Provinsi' | 'Nasional' | 'Internasional';
 export type Prestasi = 'Juara 1' | 'Juara 2' | 'Juara 3' | 'Harapan 1' | 'Harapan 2' | 'Harapan 3';
 export type JenisKelamin = 'Laki-laki' | 'Perempuan';
+export type JenisPrestasi = 'Akademik' | 'Non Akademik';
 
 export interface DatabaseMadrasah {
   nsm: string;
@@ -15,7 +16,6 @@ export interface DatabaseMadrasah {
 export interface BaseRecord {
   id: string;
   jenjang: Jenjang;
-  kkm: string;
   namaMadrasah: string;
   kecamatanMadrasah: string;
   nsm: string;
@@ -24,6 +24,7 @@ export interface BaseRecord {
   tanggalPelaksanaan: string;
   penyelenggara: string;
   sertifikatLink: string;
+  jenisPrestasi: JenisPrestasi;
   timestamp: number;
 }
 

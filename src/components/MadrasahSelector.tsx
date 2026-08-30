@@ -127,7 +127,7 @@ export default function MadrasahSelector({ onSelect, ringColor = 'emerald' }: Pr
         >
           <option value="">- Pilih Madrasah -</option>
           {filteredMadrasah.map(m => (
-            <option key={m.nsm} value={m.nsm}>{m.nama} ({m.nsm})</option>
+            <option key={m.nsm} value={m.nsm}>{m.nama}</option>
           ))}
         </select>
       </div>

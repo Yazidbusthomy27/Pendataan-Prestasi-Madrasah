@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'rekap' | 'penilaian'>('rekap');
   const [leaderboardJenjang, setLeaderboardJenjang] = useState<Jenjang | 'Semua'>('Semua');
+  const [jenisPrestasiFilter, setJenisPrestasiFilter] = useState<'Semua' | 'Akademik' | 'Non Akademik'>('Semua');
 
   useEffect(() => {
     setIsLoading(true);
@@ -29,10 +30,15 @@ export default function Dashboard() {
       });
   }, []);
 
-  const getSiswaByJenjang = (jenjang: Jenjang) => dataSiswa.filter(d => d.jenjang === jenjang).length;
-  const getGuruByJenjang = (jenjang: Jenjang) => dataGuru.filter(d => d.jenjang === jenjang).length;
-  const getKepalaByJenjang = (jenjang: Jenjang) => dataKepala.filter(d => d.jenjang === jenjang).length;
-  const getMadrasahByJenjang = (jenjang: Jenjang) => dataMadrasah.filter(d => d.jenjang === jenjang).length;
+  const filteredSiswa = React.useMemo(() => dataSiswa.filter(d => jenisPrestasiFilter === 'Semua' || d.jenisPrestasi === jenisPrestasiFilter), [dataSiswa, jenisPrestasiFilter]);
+  const filteredGuru = React.useMemo(() => dataGuru.filter(d => jenisPrestasiFilter === 'Semua' || d.jenisPrestasi === jenisPrestasiFilter), [dataGuru, jenisPrestasiFilter]);
+  const filteredKepala = React.useMemo(() => dataKepala.filter(d => jenisPrestasiFilter === 'Semua' || d.jenisPrestasi === jenisPrestasiFilter), [dataKepala, jenisPrestasiFilter]);
+  const filteredMadrasah = React.useMemo(() => dataMadrasah.filter(d => jenisPrestasiFilter === 'Semua' || d.jenisPrestasi === jenisPrestasiFilter), [dataMadrasah, jenisPrestasiFilter]);
+
+  const getSiswaByJenjang = (jenjang: Jenjang) => filteredSiswa.filter(d => d.jenjang === jenjang).length;
+  const getGuruByJenjang = (jenjang: Jenjang) => filteredGuru.filter(d => d.jenjang === jenjang).length;
+  const getKepalaByJenjang = (jenjang: Jenjang) => filteredKepala.filter(d => d.jenjang === jenjang).length;
+  const getMadrasahByJenjang = (jenjang: Jenjang) => filteredMadrasah.filter(d => d.jenjang === jenjang).length;
 
   const getScore = (tingkat: string, prestasi: string): number => {
     if (!prestasi || typeof prestasi !== 'string') return 0;
@@ -81,13 +87,13 @@ export default function Dashboard() {
       scores[record.nsm].score += getScore(record.tingkat, record.prestasi);
     };
 
-    dataSiswa.forEach(processRecord);
-    dataGuru.forEach(processRecord);
-    dataKepala.forEach(processRecord);
-    dataMadrasah.forEach(processRecord);
+    filteredSiswa.forEach(processRecord);
+    filteredGuru.forEach(processRecord);
+    filteredKepala.forEach(processRecord);
+    filteredMadrasah.forEach(processRecord);
 
     return Object.values(scores).sort((a, b) => b.score - a.score);
-  }, [dataSiswa, dataGuru, dataKepala, dataMadrasah]);
+  }, [filteredSiswa, filteredGuru, filteredKepala, filteredMadrasah]);
 
   const filteredLeaderboard = React.useMemo(() => {
     if (leaderboardJenjang === 'Semua') return leaderboard;
@@ -115,7 +121,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div>
-            <div className="flex justify-center mb-8">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
               <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 inline-flex">
                 <button
                   onClick={() => setActiveTab('rekap')}
@@ -131,6 +137,18 @@ export default function Dashboard() {
                   Penilaian
                 </button>
               </div>
+              <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-200">
+                <span className="text-sm font-medium text-slate-700">Filter Prestasi:</span>
+                <select 
+                  value={jenisPrestasiFilter}
+                  onChange={(e) => setJenisPrestasiFilter(e.target.value as any)}
+                  className="bg-transparent text-slate-700 text-sm focus:ring-0 outline-none font-semibold cursor-pointer"
+                >
+                  <option value="Semua">Semua Jenis</option>
+                  <option value="Akademik">Akademik</option>
+                  <option value="Non Akademik">Non Akademik</option>
+                </select>
+              </div>
             </div>
 
             {activeTab === 'rekap' && (
@@ -143,7 +161,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <h3 className="text-slate-500 text-sm font-medium">Prestasi Siswa</h3>
-                      <p className="text-3xl font-bold text-slate-800">{dataSiswa.length}</p>
+                      <p className="text-3xl font-bold text-slate-800">{filteredSiswa.length}</p>
                     </div>
                   </div>
                   
@@ -183,7 +201,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <h3 className="text-slate-500 text-sm font-medium">Prestasi Guru</h3>
-                      <p className="text-3xl font-bold text-slate-800">{dataGuru.length}</p>
+                      <p className="text-3xl font-bold text-slate-800">{filteredGuru.length}</p>
                     </div>
                   </div>
                   
@@ -223,7 +241,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <h3 className="text-slate-500 text-sm font-medium">Prestasi Kepala</h3>
-                      <p className="text-3xl font-bold text-slate-800">{dataKepala.length}</p>
+                      <p className="text-3xl font-bold text-slate-800">{filteredKepala.length}</p>
                     </div>
                   </div>
                   
@@ -263,7 +281,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <h3 className="text-slate-500 text-sm font-medium">Prestasi Lembaga</h3>
-                      <p className="text-3xl font-bold text-slate-800">{dataMadrasah.length}</p>
+                      <p className="text-3xl font-bold text-slate-800">{filteredMadrasah.length}</p>
                     </div>
                   </div>
                   

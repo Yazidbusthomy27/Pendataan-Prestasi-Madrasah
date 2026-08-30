@@ -66,7 +66,7 @@ export const store = {
         id: `siswa-${i}`,
         type: 'siswa',
         jenjang: normalizeJenjang(row[0]),
-        kkm: row[1] || '',
+        jenisPrestasi: row[1] || 'Akademik',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
         nsm: row[4] || '',
@@ -103,7 +103,7 @@ export const store = {
         id: `guru-${i}`,
         type: 'guru',
         jenjang: normalizeJenjang(row[0]),
-        kkm: row[1] || '',
+        jenisPrestasi: row[1] || 'Akademik',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
         nsm: row[4] || '',
@@ -140,7 +140,7 @@ export const store = {
         id: `kepala-${i}`,
         type: 'kepala',
         jenjang: normalizeJenjang(row[0]),
-        kkm: row[1] || '',
+        jenisPrestasi: row[1] || 'Akademik',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
         nsm: row[4] || '',
@@ -177,7 +177,7 @@ export const store = {
         id: `madrasah-${i}`,
         type: 'madrasah',
         jenjang: normalizeJenjang(row[0]),
-        kkm: row[1] || '',
+        jenisPrestasi: row[1] || 'Akademik',
         namaMadrasah: row[2] || '',
         kecamatanMadrasah: row[3] || '',
         nsm: row[4] || '',
@@ -195,10 +195,10 @@ export const store = {
     }
   },
   
-  addSiswa: async (record: SiswaRecord, fileBase64?: string, fileName?: string, fileMimeType?: string) => {
+  addSiswa: async (record: SiswaRecord) => {
     const row = [
       record.jenjang,
-      record.kkm,
+      record.jenisPrestasi,
       record.namaMadrasah,
       record.kecamatanMadrasah,
       record.nsm,
@@ -218,19 +218,16 @@ export const store = {
         action: 'addSiswa',
         payload: {
           row,
-          fileBase64,
-          fileName,
-          fileMimeType,
           folderId: '1ig9jTBM92liW7tDdW21LTANkMSM26tMz'
         }
       })
     });
   },
   
-  addGuru: async (record: GuruRecord, fileBase64?: string, fileName?: string, fileMimeType?: string) => {
+  addGuru: async (record: GuruRecord) => {
     const row = [
       record.jenjang,
-      record.kkm,
+      record.jenisPrestasi,
       record.namaMadrasah,
       record.kecamatanMadrasah,
       record.nsm,
@@ -250,19 +247,16 @@ export const store = {
         action: 'addGuru',
         payload: {
           row,
-          fileBase64,
-          fileName,
-          fileMimeType,
           folderId: '1ig9jTBM92liW7tDdW21LTANkMSM26tMz'
         }
       })
     });
   },
 
-  addKepala: async (record: KepalaRecord, fileBase64?: string, fileName?: string, fileMimeType?: string) => {
+  addKepala: async (record: KepalaRecord) => {
     const row = [
       record.jenjang,
-      record.kkm,
+      record.jenisPrestasi,
       record.namaMadrasah,
       record.kecamatanMadrasah,
       record.nsm,
@@ -282,19 +276,16 @@ export const store = {
         action: 'addKepala',
         payload: {
           row,
-          fileBase64,
-          fileName,
-          fileMimeType,
           folderId: '1ig9jTBM92liW7tDdW21LTANkMSM26tMz'
         }
       })
     });
   },
 
-  addMadrasah: async (record: MadrasahRecord, fileBase64?: string, fileName?: string, fileMimeType?: string) => {
+  addMadrasah: async (record: MadrasahRecord) => {
     const row = [
       record.jenjang,
-      record.kkm,
+      record.jenisPrestasi,
       record.namaMadrasah,
       record.kecamatanMadrasah,
       record.nsm,
@@ -312,9 +303,6 @@ export const store = {
         action: 'addMadrasah',
         payload: {
           row,
-          fileBase64,
-          fileName,
-          fileMimeType,
           folderId: '1ig9jTBM92liW7tDdW21LTANkMSM26tMz'
         }
       })

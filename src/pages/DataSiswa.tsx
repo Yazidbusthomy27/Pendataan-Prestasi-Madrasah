@@ -10,6 +10,7 @@ export default function DataSiswa() {
   const [data, setData] = useState<SiswaRecord[]>([]);
   const [filterJenjang, setFilterJenjang] = useState<string>('All');
   const [filterTingkat, setFilterTingkat] = useState<string>('All');
+  const [filterJenisPrestasi, setFilterJenisPrestasi] = useState<string>('All');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -22,13 +23,14 @@ export default function DataSiswa() {
   const filteredData = data.filter(item => {
     const matchJenjang = filterJenjang === 'All' || item.jenjang === filterJenjang;
     const matchTingkat = filterTingkat === 'All' || item.tingkat === filterTingkat;
-    return matchJenjang && matchTingkat;
+    const matchJenis = filterJenisPrestasi === 'All' || item.jenisPrestasi === filterJenisPrestasi;
+    return matchJenjang && matchTingkat && matchJenis;
   });
 
   const handleExportCSV = () => {
     if (filteredData.length === 0) return;
     
-    const headers = ['No', 'Jenjang', 'KKM', 'Nama Madrasah', 'NSM', 'Nama Siswa', 'L/P', 'Prestasi', 'Detail Pencapaian', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
+    const headers = ['No', 'Jenjang', 'Jenis Prestasi', 'Nama Madrasah', 'NSM', 'Nama Siswa', 'L/P', 'Prestasi', 'Detail Pencapaian', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
     
     const escapeCsv = (str: string) => {
       if (str === null || str === undefined) return '""';
@@ -39,7 +41,7 @@ export default function DataSiswa() {
     const rows = filteredData.map((item, index) => [
       index + 1,
       escapeCsv(item.jenjang),
-      escapeCsv(item.kkm),
+      escapeCsv(item.jenisPrestasi),
       escapeCsv(item.namaMadrasah),
       escapeCsv(item.nsm),
       escapeCsv(item.namaSiswa),
@@ -113,6 +115,15 @@ export default function DataSiswa() {
             <option value="Provinsi">Provinsi</option>
             <option value="Nasional">Nasional</option>
           </select>
+          <select 
+            value={filterJenisPrestasi} 
+            onChange={(e) => setFilterJenisPrestasi(e.target.value)}
+            className="px-3 py-1.5 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="All">Semua Jenis</option>
+            <option value="Akademik">Akademik</option>
+            <option value="Non Akademik">Non Akademik</option>
+          </select>
           
           <div className="ml-auto text-sm text-slate-500">
             Total Data: <strong>{filteredData.length}</strong>
@@ -132,6 +143,7 @@ export default function DataSiswa() {
                   <tr>
                     <th className="px-4 py-3">No</th>
                     <th className="px-4 py-3">Jenjang</th>
+                    <th className="px-4 py-3">Jenis Prestasi</th>
                     <th className="px-4 py-3 min-w-[200px]">Madrasah</th>
                     <th className="px-4 py-3 min-w-[200px]">Nama Siswa</th>
                     <th className="px-4 py-3">Prestasi</th>
@@ -148,6 +160,7 @@ export default function DataSiswa() {
                       <tr key={item.id} className="hover:bg-slate-50">
                         <td className="px-4 py-3">{idx + 1}</td>
                         <td className="px-4 py-3 font-medium text-slate-800">{item.jenjang}</td>
+                        <td className="px-4 py-3 text-slate-600">{item.jenisPrestasi}</td>
                         <td className="px-4 py-3">
                           <div className="font-medium text-slate-800">{item.namaMadrasah}</div>
                           <div className="text-xs text-slate-500">NSM: {item.nsm}</div>
