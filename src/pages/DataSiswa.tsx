@@ -30,7 +30,7 @@ export default function DataSiswa() {
   const handleExportCSV = () => {
     if (filteredData.length === 0) return;
     
-    const headers = ['No', 'Jenjang', 'Jenis Prestasi', 'Nama Madrasah', 'NSM', 'Nama Siswa', 'L/P', 'Prestasi', 'Detail Pencapaian', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
+    const headers = ['No', 'Jenjang', 'Jenis', 'Nama Madrasah', 'NSM', 'Nama Siswa', 'L/P', 'Prestasi', 'Detail Pencapaian', 'Tingkat', 'Tanggal', 'Penyelenggara', 'Sertifikat'];
     
     const escapeCsv = (str: string) => {
       if (str === null || str === undefined) return '""';
@@ -143,7 +143,7 @@ export default function DataSiswa() {
                   <tr>
                     <th className="px-4 py-3">No</th>
                     <th className="px-4 py-3">Jenjang</th>
-                    <th className="px-4 py-3">Jenis Prestasi</th>
+                    <th className="px-4 py-3">Jenis</th>
                     <th className="px-4 py-3 min-w-[200px]">Madrasah</th>
                     <th className="px-4 py-3 min-w-[200px]">Nama Siswa</th>
                     <th className="px-4 py-3">Prestasi</th>
